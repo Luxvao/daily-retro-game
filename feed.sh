@@ -27,8 +27,6 @@ game_description=$(echo "$game" | jq -r '.description')
 game_platforms=$(echo "$game" | jq -r '.platforms[] | .platform | .name')
 
 EMAIL=$(cat <<EOF
-From: your-email@gmail.com
-To: recipient@example.com
 Subject: $game_name - $game_released
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
