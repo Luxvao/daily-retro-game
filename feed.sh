@@ -1,7 +1,7 @@
-PLATFORMS=$(cat ./platforms.enabled | sed 's/^,//; s/,$//; s/,,/,/g')
-GENRES=$(cat ./genres.enabled | sed 's/^,//; s/,$//; s/,,/,/g')
-RECIPIENT=$(cat ./recipient.conf)
-API_KEY=$(cat ./RAWG_API_KEY)
+PLATFORMS=$(cat /platforms.enabled | sed 's/^,//; s/,$//; s/,,/,/g')
+GENRES=$(cat /genres.enabled | sed 's/^,//; s/,$//; s/,,/,/g')
+RECIPIENT=$(cat /recipient.conf)
+API_KEY=$(cat /RAWG_API_KEY)
 
 # Getting a count of the total games
 TOTAL_GAMES=$(curl "https://api.rawg.io/api/games?key=$API_KEY&platforms=$PLATFORMS&genres=$GENRES" | jq -r '.count')
@@ -37,7 +37,7 @@ Content-Type: text/html; charset=UTF-8
   <body style="font-family: Arial, sans-serif; line-height:1.5;">
     <h2>$game_name ($game_released)</h2>
     <img src="$background_image" alt="$game_name" style="max-width:600px; width:100%; height:auto; display:block; margin-bottom:15px;">
-    <h3>Platforms: \n$game_platforms</h3>
+    <h3>Platforms: <span style="font-weight: normal; font-size: 0.8em;">$game_platforms</span></h3>
     <h3>Description</h3>
     <p>$game_description</p>
     <p style="font-size:0.8em; color:#555;">Data provided by <a href="https://rawg.io" target="_blank" style="color:#555; text-decoration:underline;">RAWG.io</a></p>
@@ -47,5 +47,5 @@ EOF
 )
 
 echo "Sending..."
-echo -e "$EMAIL" | msmtp -C ./msmtp.conf "$RECIPIENT"
+echo -e "$EMAIL" | msmtp -C /msmtp.conf "$RECIPIENT"
 # echo -e "$EMAIL"
