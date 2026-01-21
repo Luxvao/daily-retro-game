@@ -1,7 +1,7 @@
 FROM docker.io/alpine
 
 # Install tools
-RUN apk add --no-cache msmtp curl cronie jq ca-certificates
+RUN apk add --no-cache msmtp curl cronie jq ca-certificates bash
 
 COPY ./feed.sh /feed.sh
 

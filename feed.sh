@@ -1,3 +1,5 @@
+#! /bin/bash
+
 PLATFORMS=$(cat /platforms.enabled | sed 's/^,//; s/,$//; s/,,/,/g')
 GENRES=$(cat /genres.enabled | sed 's/^,//; s/,$//; s/,,/,/g')
 RECIPIENT=$(cat /recipient.conf)
