@@ -5,3 +5,4 @@ genres.resp
 genres.enabled
 recipient.conf
 msmtp.conf
+target/
