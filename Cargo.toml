@@ -9,6 +9,7 @@ color-eyre = "0.6.5"
 cron = "0.15.0"
 json = "0.12.4"
 lettre = "0.11.19"
+rand = "0.9.2"
 ratatui = "0.30.0"
 reqwest = { version = "0.13.1", features = ["blocking"] }
 serde = { version = "1.0.228", features = ["derive"] }
