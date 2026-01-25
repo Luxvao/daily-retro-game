@@ -1,55 +1,163 @@
 use color_eyre::eyre::Result;
-use ratatui::{
-    DefaultTerminal, Frame,
-    crossterm::{
-        self,
-        event::{Event, KeyCode, KeyEvent, KeyModifiers},
-    },
-    layout::Rect,
-    widgets::{Block, BorderType, Borders, Paragraph},
-};
+use dialoguer::{Input, MultiSelect, Select, theme::ColorfulTheme};
 
-use crate::config::Config;
+use crate::{
+    config::Config,
+    rawg::{get_genres, get_platforms},
+};
 
 pub fn configure_new() -> Result<Config> {
     configure_existent(Config::default())
 }
 
 pub fn configure_existent(mut config: Config) -> Result<Config> {
-    ratatui::run(|term| app(term, &mut config))?;
+    let options = vec![
+        "Edit Genres",
+        "Edit Platforms",
+        "Edit RAWG API Key",
+        "Edit SMTP Settings",
+        "Edit Cron Expression",
+    ];
+
+    loop {
+        let Some(selection) = Select::with_theme(&ColorfulTheme::default())
+            .items(&options)
+            .default(0)
+            .interact_opt()?
+        else {
+            break;
+        };
+
+        match options[selection] {
+            "Edit Genres" => genre_options(&mut config)?,
+            "Edit Platforms" => platform_options(&mut config)?,
+            "Edit RAWG API Key" => {
+                config.rawg_key = input_wrapper("RAWG Key", config.rawg_key.clone())?
+            }
+            "Edit SMTP Settings" => smtp_settings(&mut config)?,
+            "Edit Cron Expression" => {
+                config.cron = input_wrapper("Cron Expression", config.cron.clone())?
+            }
+            _ => unreachable!(),
+        }
+    }
 
     Ok(config)
 }
 
-fn app(terminal: &mut DefaultTerminal, config: &mut Config) -> std::io::Result<()> {
-    loop {
-        terminal.draw(render)?;
+fn genre_options(config: &mut Config) -> Result<()> {
+    // Get all available genres
+    let available_genres = get_genres(config)?;
 
-        let event = crossterm::event::read()?;
+    // Extract the IDs
+    let ids = available_genres
+        .iter()
+        .map(|genre| genre.id)
+        .collect::<Vec<u8>>();
 
-        if event == Event::Key(KeyEvent::new(KeyCode::Char('q'), KeyModifiers::empty())) {
-            break;
-        }
-    }
+    // Extract the names
+    let names = available_genres
+        .iter()
+        .map(|genre| genre.name.as_str())
+        .collect::<Vec<&str>>();
+
+    // Figure out which are enabled already and turn it into a Vec<bool> (for defaults in the selection)
+    let already_enabled = ids
+        .iter()
+        .map(|id| config.genres.contains(id))
+        .collect::<Vec<bool>>();
+
+    // Show the selection menu
+    let selections = MultiSelect::with_theme(&ColorfulTheme::default())
+        .items(&names)
+        .defaults(&already_enabled)
+        .interact()?;
+
+    // Construct the ID vector from the selection indices
+    config.genres = selections
+        .iter()
+        .map(|idx| available_genres[*idx].id)
+        .collect::<Vec<u8>>();
 
     Ok(())
 }
 
-fn render(frame: &mut Frame) {
-    let main_area = Rect::new(0, 0, frame.area().width, frame.area().height);
+fn platform_options(config: &mut Config) -> Result<()> {
+    // Get all available platforms
+    let available_platforms = get_platforms(config)?;
 
-    let main_menu = Paragraph::new(
-        "
-Configure SMTP
-Configure RAWG
-Configure timing",
-    )
-    .block(
-        Block::new()
-            .title("Main Menu")
-            .borders(Borders::ALL)
-            .border_type(BorderType::Rounded),
-    );
+    // Extract the IDs
+    let ids = available_platforms
+        .iter()
+        .map(|platform| platform.id)
+        .collect::<Vec<u8>>();
 
-    frame.render_widget(main_menu, main_area);
+    // Extract the names
+    let names = available_platforms
+        .iter()
+        .map(|genre| genre.name.as_str())
+        .collect::<Vec<&str>>();
+
+    // Figure out which are enabled already and turn it into a Vec<bool> (for defaults in the selection)
+    let already_enabled = ids
+        .iter()
+        .map(|id| config.platforms.contains(id))
+        .collect::<Vec<bool>>();
+
+    // Show the selection menu
+    let selections = MultiSelect::with_theme(&ColorfulTheme::default())
+        .items(&names)
+        .defaults(&already_enabled)
+        .interact()?;
+
+    // Construct the ID vector from the selection indices
+    config.platforms = selections
+        .iter()
+        .map(|idx| available_platforms[*idx].id)
+        .collect::<Vec<u8>>();
+
+    Ok(())
+}
+
+fn input_wrapper(prompt: &str, default: String) -> Result<String> {
+    Ok(Input::with_theme(&ColorfulTheme::default())
+        .with_prompt(prompt)
+        .with_initial_text(default)
+        .interact_text()?)
+}
+
+fn smtp_settings(config: &mut Config) -> Result<()> {
+    let options = vec![
+        "Edit Source Email",
+        "Edit Source Email Authentication",
+        "Edit Destination Email",
+        "Edit SMTP Server",
+    ];
+
+    loop {
+        let Some(selection) = Select::with_theme(&ColorfulTheme::default())
+            .items(&options)
+            .default(0)
+            .interact_opt()?
+        else {
+            return Ok(());
+        };
+
+        match options[selection] {
+            "Edit Source Email" => {
+                config.src_email = input_wrapper("Source Email", config.src_email.clone())?
+            }
+            "Edit Source Email Authentication" => {
+                config.src_email_auth =
+                    input_wrapper("Source Email Authentication", config.src_email_auth.clone())?
+            }
+            "Edit Destination Email" => {
+                config.dest_email = input_wrapper("Destination Email", config.dest_email.clone())?
+            }
+            "Edit SMTP Server" => {
+                config.smtp_server = input_wrapper("SMTP Server", config.smtp_server.clone())?
+            }
+            _ => unreachable!(),
+        }
+    }
 }

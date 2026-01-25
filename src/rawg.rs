@@ -1,6 +1,16 @@
-use color_eyre::{eyre::ContextCompat, Result};
+use color_eyre::{Result, eyre::ContextCompat};
 
 use crate::{config::Config, game::Game};
+
+pub struct Genre {
+    pub id: u8,
+    pub name: String,
+}
+
+pub struct Platform {
+    pub id: u8,
+    pub name: String,
+}
 
 pub fn get_page(config: &Config, page_n: u32) -> Result<(u32, Vec<Game>)> {
     let resp = reqwest::blocking::get(format!(
@@ -74,4 +84,52 @@ pub fn get_description(config: &Config, id: u32) -> Result<Option<String>> {
     Ok(json_parsed["description"]
         .as_str()
         .map(|desc| desc.to_string()))
+}
+
+pub fn get_genres(config: &Config) -> Result<Vec<Genre>> {
+    let resp = reqwest::blocking::get(format!(
+        "https://api.rawg.io/api/genres?key={}",
+        config.rawg_key
+    ))?;
+
+    let json_parsed = json::parse(resp.text()?.as_str())?;
+
+    let genres = json_parsed["results"]
+        .members()
+        .map(|genre| {
+            Ok(Genre {
+                id: genre["id"].as_u8().context("ID is not an integer")?,
+                name: genre["name"]
+                    .as_str()
+                    .context("Name is not a string")
+                    .map(|name| name.to_string())?,
+            })
+        })
+        .collect::<Result<Vec<Genre>>>()?;
+
+    Ok(genres)
+}
+
+pub fn get_platforms(config: &Config) -> Result<Vec<Platform>> {
+    let resp = reqwest::blocking::get(format!(
+        "https://api.rawg.io/api/platforms?key={}",
+        config.rawg_key
+    ))?;
+
+    let json_parsed = json::parse(resp.text()?.as_str())?;
+
+    let platforms = json_parsed["results"]
+        .members()
+        .map(|platform| {
+            Ok(Platform {
+                id: platform["id"].as_u8().context("ID is not an integer")?,
+                name: platform["name"]
+                    .as_str()
+                    .context("Name is not a string")
+                    .map(|name| name.to_string())?,
+            })
+        })
+        .collect::<Result<Vec<Platform>>>()?;
+
+    Ok(platforms)
 }

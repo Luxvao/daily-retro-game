@@ -1,15 +1,18 @@
 use std::{
-    fs::File,
+    fs::{File, OpenOptions},
     io::{Read, Seek, Write},
     path::{Path, PathBuf},
 };
 
 use clap::{Parser, Subcommand};
 use color_eyre::Result;
+use log::info;
 
 use crate::{
     config::Config,
     daemon,
+    game::Game,
+    smtp::email_game,
     tui::{configure_existent, configure_new},
 };
 
@@ -41,15 +44,19 @@ pub fn init() -> Result<()> {
 }
 
 fn send(config: &Path) -> Result<()> {
+    let config = Config::from_path(config)?;
+
+    let game = Game::random(&config)?;
+    info!("Sending...");
+
+    email_game(&config, &game)?;
+    info!("{} sent.", game.name);
+
     Ok(())
 }
 
 fn daemon(config: &Path) -> Result<()> {
-    let mut config_file = File::open(config)?;
-    let mut contents = Vec::new();
-    config_file.read_to_end(&mut contents)?;
-
-    let config = toml::from_slice::<Config>(&contents)?;
+    let config = Config::from_path(config)?;
 
     daemon::init(&config)
 }
@@ -60,7 +67,10 @@ fn configure(config: Option<PathBuf>) -> Result<()> {
     let (mut config_file, config): (File, Config) = if !config_path.try_exists()? {
         (File::create(config_path)?, configure_new()?)
     } else {
-        let mut file = File::open(config_path)?;
+        let mut file = OpenOptions::new()
+            .write(true)
+            .read(true)
+            .open(config_path)?;
 
         let mut contents = Vec::new();
 
