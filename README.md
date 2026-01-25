@@ -7,10 +7,13 @@ This project provides a daemon to schedule deliveries of random retro games to a
 - A destination address (eg. Kill the Newsletter! address)
 
 ## Usage
-1. Configure it
-1. a) Manually - Not recommended, but possible.
-1. b) Using `./drg configure [path to config.toml]` - It will show you a UI to set everything up. It also supports editing existing configurations, if one already exists at the OPTIONAL path argument (default is `./config.toml`)
-2. Run `./drg daemon (path to config.toml)` in the background - Path argument is NOT OPTIONAL
+1. Configure it:
+   - Manually (not recommended, but possible)
+   - Using `./drg configure [path to config.toml]`
+     - Shows a UI to set everything up
+     - Can edit an existing config if one exists at the **optional** path (default: `./config.toml`)
+2. Run `./drg daemon [path to config.toml]` in the background  
+   - The path argument is **required**
 3. And you're done!
 
 ### Note:
