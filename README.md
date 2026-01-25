@@ -3,7 +3,7 @@ This project provides a daemon to schedule deliveries of random retro games to a
 
 ## Requirements
 - An SMTP provider and credentials (Gmail is fine; see [Gmail](#gmail))
-- A RAWG API key
+- A [RAWG](https://rawg.io/apidocs) API key
 - A destination address (eg. Kill the Newsletter! address)
 
 ## Usage
@@ -21,7 +21,7 @@ There is also the `./drg send (path to config.toml)` command that sends a one-of
 
 ## Gmail
 To use Gmail as your SMTP provider you need:
-- A Gmail account WITH 2fa enabled
+- A Gmail account with 2fa enabled
 - An "App Password" for the Gmail account
 
 ### Important
