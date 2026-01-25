@@ -1,9 +1,0 @@
-src_email = ""
-src_email_auth = ""
-smtp_server = ""
-smtp_port = ""
-dest_email = ""
-rawg_api = ""
-platforms = []
-genres = []
-cron = ""
