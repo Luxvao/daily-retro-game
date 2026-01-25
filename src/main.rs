@@ -5,6 +5,7 @@ mod config;
 mod daemon;
 mod game;
 mod rawg;
+mod smtp;
 mod tui;
 
 fn main() -> Result<()> {

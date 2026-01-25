@@ -9,6 +9,7 @@ use color_eyre::Result;
 
 use crate::{
     config::Config,
+    daemon,
     tui::{configure_existent, configure_new},
 };
 
@@ -44,7 +45,13 @@ fn send(config: &Path) -> Result<()> {
 }
 
 fn daemon(config: &Path) -> Result<()> {
-    Ok(())
+    let mut config_file = File::open(config)?;
+    let mut contents = Vec::new();
+    config_file.read_to_end(&mut contents)?;
+
+    let config = toml::from_slice::<Config>(&contents)?;
+
+    daemon::init(&config)
 }
 
 fn configure(config: Option<PathBuf>) -> Result<()> {

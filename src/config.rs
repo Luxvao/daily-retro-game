@@ -6,7 +6,6 @@ pub struct Config {
     pub src_email: String,
     pub src_email_auth: String,
     pub smtp_server: String,
-    pub smtp_port: String,
     pub dest_email: String,
 
     // RAWG
