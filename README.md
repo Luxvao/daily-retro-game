@@ -22,7 +22,7 @@ To use Gmail as your SMTP provider you need:
 - An "App Password" for the Gmail account
 
 ### Important
-Use the app password for the "Source Email Authentication" option in the settings *NOT YOUR EMAIL PASSWORD*
+Use the app password for the "Source Email Authentication" option in the settings **NOT YOUR EMAIL PASSWORD**
 
 ## Cron
 Due to how the [cron](https://docs.rs/cron/latest/cron/) crate works it doesn't use standard cron syntax. Example from documentation:
@@ -35,7 +35,7 @@ This is what I use so it sends daily at 7:30 AM:
 ```
 0 30 7 * * *
 ```
-That means at 7:30:00 on *any* day, month, and year.
+That means at 7:30:00 on **any** day, month, and year.
 
 You could also do every 24 hours from when you launch it as such:
 ```
