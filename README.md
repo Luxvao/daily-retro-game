@@ -1,5 +1,5 @@
 # Daily Retro Games
-This project provides a daemon to schedule deliveries of random retro games to an email inbox (I use it with [Kill the Newsletter!](https://kill-the-newsletter.com/); can recommended, they're awesome). It uses cron-like syntax (see [Cron](#cron)) to schedule deliveries and RAWG to pick out a random game.
+This project provides a daemon to schedule deliveries of random retro games to an email inbox (I use it with [Kill the Newsletter!](https://kill-the-newsletter.com/); can recommend, they're awesome). It uses cron-like syntax (see [Cron](#cron)) to schedule deliveries and RAWG to pick out a random game.
 
 ## Requirements
 - An SMTP provider and credentials (Gmail is fine; see [Gmail](#gmail))
