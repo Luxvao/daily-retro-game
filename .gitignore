@@ -1,2 +1,9 @@
 config.toml
-/target
+RAWG_API_KEY
+platforms.resp
+platforms.enabled
+genres.resp
+genres.enabled
+recipient.conf
+msmtp.conf
+target/
